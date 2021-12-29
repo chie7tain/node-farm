@@ -2,14 +2,14 @@ const url = require("url");
 const fs = require("fs");
 
 const replaceTemplate = (temp, product) => {
-  let output = temp.replace(`{%PRODUCTNAME%}`, product.productName);
-  output = output.replace(`{%IMAGE%}`, product.image);
-  output = output.replace(`{%PRICE%}`, product.price);
-  output = output.replace(`{%FROM%}`, product.from);
-  output = output.replace(`{%NUTRIENTS%}`, product.nutrients);
-  output = output.replace(`{%QUANTITY%}`, product.quantity);
-  output = output.replace(`{%DESCRIPTION%}`, product.description);
-  output = output.replace(`{%ID%}`, product.id);
+  let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName);
+  output = output.replace(/{%IMAGE%}/g, product.image);
+  output = output.replace(/{%PRICE%}/g, product.price);
+  output = output.replace(/{%FROM%}/g, product.from);
+  output = output.replace(/{%NUTRIENTS%}/g, product.nutrients);
+  output = output.replace(/{%QUANTITY%}/g, product.quantity);
+  output = output.replace(/{%DESCRIPTION%}/g, product.description);
+  output = output.replace(/{%ID%}/g, product.id);
   if (!product.organic) {
     output = output.replace(`{%NOT_ORGANIC%}`, `not-organic`);
   }
@@ -34,10 +34,13 @@ const tempCard = fs.readFileSync(
 
 require("http")
   .createServer((req, res) => {
-    const pathName = req.url;
+    const { query, pathname: pathName } = url.parse(req.url, true);
+
+    // const pathName = req.url;
     // Overview:
 
     if (pathName === "/" || pathName === "/overview") {
+      console.log(query);
       res.writeHead(200, { "Content-type": "text/html" });
 
       const cardsHtml = dataObj
@@ -49,8 +52,12 @@ require("http")
 
       // Product:
     } else if (pathName === "/product") {
+      const product = dataObj[query.id];
+      console.log(product);
+      const productTemplate = replaceTemplate(tempProduct, product);
+      console.log(productTemplate);
       res.writeHead(200, { "Content-type": "text/html" });
-      res.end(tempProduct);
+      res.end(productTemplate);
       // API:
     } else if (pathName === "/api") {
       res.writeHead(200, { "Content-Type": "application/json" });
