@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "name": "starter",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chie7tain/node-farm.git"
+  },
+  "author": "chie7tain",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chie7tain/node-farm/issues"
+  },
+  "homepage": "https://github.com/chie7tain/node-farm#readme"
+}
