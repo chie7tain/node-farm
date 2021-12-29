@@ -1,7 +1,24 @@
 const url = require("url");
 const fs = require("fs");
 
+const replaceTemplate = (temp, product) => {
+  let output = temp.replace(`{%PRODUCTNAME%}`, product.productName);
+  output = output.replace(`{%IMAGE%}`, product.image);
+  output = output.replace(`{%PRICE%}`, product.price);
+  output = output.replace(`{%FROM%}`, product.from);
+  output = output.replace(`{%NUTRIENTS%}`, product.nutrients);
+  output = output.replace(`{%QUANTITY%}`, product.quantity);
+  output = output.replace(`{%DESCRIPTION%}`, product.description);
+  output = output.replace(`{%ID%}`, product.id);
+  if (!product.organic) {
+    output = output.replace(`{%NOT_ORGANIC%}`, `not-organic`);
+  }
+  return output;
+};
+
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+const dataObj = JSON.parse(data);
+
 const tempOverview = fs.readFileSync(
   `${__dirname}/templates/template-overview.html`,
   "utf-8"
@@ -22,7 +39,13 @@ require("http")
 
     if (pathName === "/" || pathName === "/overview") {
       res.writeHead(200, { "Content-type": "text/html" });
-      res.end(tempOverview);
+
+      const cardsHtml = dataObj
+        .map((el) => replaceTemplate(tempCard, el))
+        .join("");
+      const output = tempOverview.replace(`{%PRODUCT_CARDS%}`, cardsHtml);
+
+      res.end(output);
 
       // Product:
     } else if (pathName === "/product") {
